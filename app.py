@@ -12,12 +12,12 @@ def room():
     chats = [
         {
             "user": "Rahat006",
-            "message": "Fuck You!",
+            "message": "Hello",
             "time": time.time()
         },
         {
             "user": "Rahat007",
-            "message": "Fuck You more!",
+            "message": "Hey there!",
             "time": time.time()
         },
     ]
