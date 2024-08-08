@@ -3,18 +3,21 @@
   <h4 class="mb-10 text-center font-semibold text-2xl">Room ID: {{roomId}}</h4>
 
   <div class="bg-gray-700 w-full border-2 border-gray-600 rounded-lg">
-    <div class="min-h-[550px] overflow-y-auto w-full space-y-3 p-5">
+    <div
+      class="h-[550px] overflow-y-auto w-full space-y-3 p-5"
+      id="messageContainer"
+    >
       {% for content in chats %}
       <div class="flex items-center justify-between">
         <div class="flex gap-2">
-          <p class="text-lg font-semibold">{{content.user}}:</p>
+          <p class="text-lg font-semibold text-nowrap">{{content.user}}:</p>
           <p>{{content.message}}</p>
         </div>
         <p>{{content.time}}</p>
       </div>
       {% endfor %}
     </div>
-    <form class="flex gap-5 items-center p-5">
+    <form class="flex gap-5 items-center p-5" id="messageForm">
       <input
         type="text"
         name="message"
@@ -31,4 +34,28 @@
     </form>
   </div>
 </div>
+<script type="text/javascript">
+  const socketIo = io();
+
+  const messageContainer = document.getElementById("messageContainer");
+  const messageForm = document.getElementById("messageForm");
+
+  socketIo.on("message", (data) => {
+    messageContainer.innerHTML += ` <div class="flex items-center justify-between">
+        <div class="flex gap-2">
+          <p class="text-lg text-nowrap font-semibold">${data.user}:</p>
+          <p style="${data.msgStyle ?? ""}">${data.message}</p>
+        </div>
+        <p>${data.time}</p>
+      </div>`;
+  });
+
+  messageForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const message = e.target.message.value;
+
+    socketIo.emit("message", { message: message });
+    e.target.reset();
+  });
+</script>
 {% endblock main %}
